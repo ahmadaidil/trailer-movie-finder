@@ -1,8 +1,8 @@
-const setResults = (results) => {
+const setResults = (res) => {
   return {
     type: 'search',
     payload: {
-      results: results
+      results: res
     }
   }
 }
