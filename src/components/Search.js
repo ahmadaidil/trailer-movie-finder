@@ -20,7 +20,7 @@ export default class Search extends Component {
   }
 
   searchNow (event) {
-    if(event.key === 'Enter') this.props.history.push(`/results/${this.state.keyword}/1`)
+    if(event.key === 'Enter') this.props.history.push(`/results/${this.state.keyword}`)
   }
 
   render() {

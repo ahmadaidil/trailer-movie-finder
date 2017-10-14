@@ -1,50 +1,40 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import MovieDB from 'moviedb'
 import { Row, Col, PageHeader, Well, Image, Pagination } from 'react-bootstrap'
 import TextTruncate from 'react-text-truncate'
 import { Link } from 'react-router-dom'
 
-import searchAction from '../actions/searchAction'
-
-const mdb = MovieDB('bb1a087efcf138ae57a0fdb10c961bf5')
+import { getResults } from '../actions/searchAction'
 
 class Results extends Component {
   constructor (props) {
-    super(props)
+    super()
     this.state = {
-      keyword: props.match.params.keyword,
-      activePage: props.match.params.page
+      keyword: props.match.params.keyword
     }
   }
 
-  componentDidMount (prevProps) {
-    mdb.searchMovie({ query: this.state.keyword, page: this.state.activePage }, (err, res) => {
-      if (err) console.error(err)
-      if(res !== null) {
-        this.props.setResults(res)
-      }
+  results(page) {
+    this.props.getResults({
+      query: this.state.keyword,
+      page: page
     })
+  }
+
+  componentDidMount () {
+    this.results(1)
   }
 
   handleSelect(eventKey) {
-    this.props.history.push(`/results/${this.state.keyword}/${eventKey}`)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    this.setState({
-      keyword: nextProps.match.params.keyword,
-      activePage: nextProps.match.params.page
-    })
+    this.results(eventKey)
   }
 
   render() {
-    let state = this.props.state
-    console.log(this.state.activePage)
-    console.log(state)
+    const state = this.props.state
+    const query = this.state.keyword
     return (
       <div><div className="container">
-        <PageHeader>Search results for "{this.state.keyword}"</PageHeader>
+        <PageHeader>Search results for "{query}"</PageHeader>
         <Pagination
             className={state.total_pages === 1 ? 'hidden':'shown'}
             prev
@@ -55,7 +45,7 @@ class Results extends Component {
             boundaryLinks
             items={state.total_pages}
             maxButtons={5}
-            activePage={ parseInt(this.state.activePage, 10)}
+            activePage={ parseInt(state.page, 10)}
             onSelect={this.handleSelect.bind(this)} />
         <h3 className={state.total_results === 0 ? 'shown' : 'hidden'}>"We know you’re looking for water, but sorry dude, this is a desert!"</h3>
         <Row className="clearfix">
@@ -99,8 +89,8 @@ class Results extends Component {
 const mapStateToProps = (state) => ({state: state.search.results})
 
 const mapDispatchToProps = (dispatch) => ({
-  setResults: (results) => {
-    return dispatch(searchAction(results))
+  getResults: (state) => {
+    return dispatch(getResults(state))
   }
 })
 

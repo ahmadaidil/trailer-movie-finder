@@ -9,7 +9,7 @@ export default function Index() {
     <Router>
       <div>
         <Route exact path='/' component={Search} />
-        <Route exact path='/results/:keyword/:page' component={Results} />
+        <Route exact path='/results/:keyword' component={Results} />
       </div>
     </Router>
   )
